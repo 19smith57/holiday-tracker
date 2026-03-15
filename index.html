@@ -667,7 +667,15 @@ function loadData() {
 }
 
 function saveData(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+  try { 
+    const json = JSON.stringify(data);
+    localStorage.setItem(STORAGE_KEY, json);
+    // Verify it was saved
+    const verify = localStorage.getItem(STORAGE_KEY);
+    if (!verify) showToast('Warning: data not saved!', 'error');
+  } catch(e) { 
+    showToast('Storage error: ' + e.message, 'error');
+  }
 }
 
 // Load holidays — if URL has #share= use that data, otherwise use localStorage
