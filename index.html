@@ -674,6 +674,16 @@ async function loadFromGitHub() {
 
 async function saveToGitHub(data) {
   try {
+    // If we don't have SHA yet, fetch it first
+    if (!_ghSha) {
+      const check = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE, {
+        headers: { 'Authorization': 'token ' + GH_TOKEN, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (check.ok) {
+        const existing = await check.json();
+        _ghSha = existing.sha;
+      }
+    }
     const body = {
       message: 'Update holidays',
       content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))),
